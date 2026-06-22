@@ -2,7 +2,7 @@ import os
 import shutil #We use it specifically to copy file streams directly to your disk.
 from fastapi import FastAPI,HTTPException,UploadFile,File
 from fastapi.responses import JSONResponse
-from app.task import celery_app,meida_task_converter
+from app.tasks import celery_app,meida_task_converter
 
 app=FastAPI(title="asynchronous media converter api")
 
@@ -22,7 +22,8 @@ async def convert_media(file:UploadFile=File(...)): #(...) makes upload mandator
     with open(input_path,"wb") as buffer:
         shutil.copyfileobj(file.file,buffer)#streams the raw upload binary data straight from the incoming network 
         #stream (file.file) directly into our newly opened file buffer on the hard drive
-    task=meida_task_converter.delay(input_path,output_path) #This tells Celery: "Hey, package up a small text note containing the input_path and output_path strings, and throw it into the Redis queue."
+    task=meida_task_converter.delay(input_path,output_path) #This tells Celery: "Hey, package up a small text note 
+    #containing the input_path and output_path strings, and throw it into the Redis queue."
 
     return JSONResponse(
         status_code=202,
