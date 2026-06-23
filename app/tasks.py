@@ -1,4 +1,4 @@
-# import time
+## import time
 import subprocess
 import re
 from celery import Celery
@@ -10,7 +10,7 @@ celery_app=Celery(
     backend=settings.REDIS_URL #where to save results
 )
 
-@celery_app.task(bind=True)
+@celery_app.task(bind=True)#celery library,A wrapper that intercepts your function and turns its parameters into an asynchronous message packet.
 def meida_task_converter(self,input_path:str,output_path:str):
     print(f"starting real ffmpeg conversion for: {input_path}")
     self.update_state(state='PROGRESS',meta={'percent':"processing...."})
@@ -32,7 +32,7 @@ def meida_task_converter(self,input_path:str,output_path:str):
     ffmpeg_command=[
         "ffmpeg","-y","-i",input_path,"-progress","pipe:1",output_path
     ]
-    #launch the process asynchronously
+    #launch the process asynchronously , supprocess.popen is built-in python
     process=subprocess.Popen(
         ffmpeg_command,
         stdout=subprocess.PIPE,
@@ -46,7 +46,7 @@ def meida_task_converter(self,input_path:str,output_path:str):
             break #exit loop if ffmpeg has completed finished
         if "frame=" in line:
             #extract raw integer number following "frames=" using Regex
-            match=re.search(r"frame=\s*(\d+)",line)
+            match=re.search(r"frame=\s*(\d+)",line) #re.search is inbuilt python,like textscanner to find specific characters
             if match:
                 current_frame=int(match.group(1))
                 #math equation
