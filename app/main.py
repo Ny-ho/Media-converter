@@ -1,6 +1,6 @@
 import os
 import shutil #We use it specifically to copy file streams directly to your disk.
-from fastapi import FastAPI,HTTPException,UploadFile,File
+from fastapi import FastAPI,HTTPException,UploadFile,File,Query
 from fastapi.responses import JSONResponse
 from app.tasks import celery_app,meida_task_converter
 
@@ -11,8 +11,10 @@ OUTPUT_DIR="data/outputs"
 os.makedirs(UPLOAD_DIR,exist_ok=True)
 os.makedirs(OUTPUT_DIR,exist_ok=True)
 
+ALLOWED_TARGET_FORMATS={'avi','mp3','gif','mkv'}
+
 @app.post("/api/v1/media/convert")
-async def convert_media(file:UploadFile=File(...)): #(...) makes upload mandatory
+async def convert_media(file:UploadFile=File(...),target_format:str=Query("avi",description="the target format extension to convert to")): #(...) makes upload mandatory
     if not file.filename.endswith(".mp4"):
         raise HTTPException(status_code=400,detail="only .mp4 files are supported")
     input_path=os.path.join(UPLOAD_DIR,file.filename)
