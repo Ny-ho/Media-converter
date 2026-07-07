@@ -1,0 +1,9 @@
+Here is the exact step-by-step of what that FFmpeg C program does on your WSL hard drive when Python (through a Python wrapper) triggers it:
+
+Reads the Input: It opens up your data/uploads/video.mp4 file.
+
+Decompresses it: It decodes the video frames into raw images.
+
+Converts it: It translates those images and audio bytes into the mathematical rules that .avi requires.
+
+Writes the Output: It streams those newly formatted bytes onto your hard disk, creating a true, readable .avi file inside data/outputs/.
